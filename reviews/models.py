@@ -25,6 +25,6 @@ class Review(models.Model):
     album = models.ForeignKey(Album)
     pub_date = models.DateTimeField('date published')
     user = models.CharField(max_length=100)
-    comment = models.CharField(max_length=400)
+    comment = models.TextField()
     rating = models.IntegerField(choices=RATING_CHOICES)
 
