@@ -25,7 +25,7 @@ SECRET_KEY = '4l=yjm#@uqxrcn#0qa=5k6b2uy=h7(0ube(4yg0#uo)2kexq%5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.musiciancoder.com']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'reviews'
 ]
 
 MIDDLEWARE = [
