@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^album$', views.album_list, name='album_list'),
     # ex: /album/5/
     url(r'^album/(?P<album_id>[0-9]+)/$', views.album_detail, name='album_detail'),
+    url(r'^album/(?P<album_id>[0-9]+)/add_review/$', views.add_review, name='add_review'),
 ]

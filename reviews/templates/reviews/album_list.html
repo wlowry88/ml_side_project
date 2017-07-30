@@ -1,0 +1,23 @@
+{% extends 'reviews/base.html' %}
+
+{% block title %}
+<h2>Album list</h2>
+{% endblock %}
+
+{% block content %}
+{% if album_list %}
+<div>
+    {% for album in album_list %}
+    <div>
+        <h4><a href="{% url 'reviews:album_detail' album.id %}">
+        {{ album.name }}
+        </a></h4>
+        <h5>{{ album.review_set.count }} reviews</h5>
+        <h5>{{ album.average_rating | floatformat }} average rating</h5>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p>No albums are available.</p>
+{% endif %}
+{% endblock %}

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-# Create your views here.
+import datetime
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from .models import Review, Album
+from .forms import ReviewForm
 
 
 def review_list(request):
@@ -25,4 +28,26 @@ def album_list(request):
 
 def album_detail(request, album_id):
     album = get_object_or_404(Album, pk=album_id)
-    return render(request, 'reviews/album_detail.html', {'album': album})
+    form = ReviewForm()
+    return render(request, 'reviews/album_detail.html', {'album': album, 'form': form})
+
+def add_review(request, album_id):
+    album = get_object_or_404(Album, pk=album_id)
+    form = ReviewForm(request.POST)
+    if form.is_valid():
+        rating = form.cleaned_data['rating']
+        comment = form.cleaned_data['comment']
+        user = form.cleaned_data['user']
+        review = Review()
+        review.album = album
+        review.user = user
+        review.rating = rating
+        review.comment = comment
+        review.pub_date = datetime.datetime.now()
+        review.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('reviews:album_detail', args=(album.id,)))
+
+    return render(request, 'reviews/album_detail.html', {'album': album, 'form': form})
