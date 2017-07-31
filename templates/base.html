@@ -17,10 +17,22 @@
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a href="{% url 'reviews:album_list' %}">Album List</a></li>
         <li><a href="{% url 'reviews:review_list' %}">Home</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'reviews:user_review_list' user.username %}">Hello {{ user.username }}</a></li>
+        <li><a href="{% url 'auth:logout' %}">Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'auth:login' %}">Login</a></li>
+        {% endif %}
       </ul>
       <ul class="side-nav" id="mobile-demo">
         <li><a href="{% url 'reviews:album_list' %}">Album List</a></li>
         <li><a href="{% url 'reviews:review_list' %}">Home</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'reviews:user_review_list' user.username %}">Hello {{ user.username }}</a></li>
+        <li><a href="{% url 'auth:logout' %}">Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'auth:login' %}">Login</a></li>
+        {% endif %}
       </ul>
     </div>
    </div>
@@ -28,5 +40,9 @@
   <div class="container">
     <h1>{% block title %}(no title){% endblock %}</h1>
     {% block content %}(no content){% endblock %}
+    <script>
+        $(".button-collapse").sideNav();
+        $('select').material_select();
+    </script>
   </div>
 </body>

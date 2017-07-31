@@ -1,4 +1,4 @@
-{% extends 'reviews/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}
 <h2>{{ album.name }}</h2>
@@ -9,16 +9,18 @@
 <h3>Recent reviews</h3>
 
 {% if album.review_set.all %}
-<div>
+<div class="row">
+  <div class="col s6">
     {% for review in album.review_set.all %}
-    <div>
+    <div class="col s12">
         <em>{{ review.comment }}</em>
-        <h6>Rated {{ review.rating }} of 5 by {{ review.user }}</h6>
+        <h6>Rated {{ review.rating }} of 5 by {{ review.user.username }}</h6>
         <h5><a href="{% url 'reviews:review_detail' review.id %}">
         Read more
         </a></h5>
     </div>
     {% endfor %}
+  </div>
 </div>
 {% else %}
 <p>No reviews for this album yet</p>
@@ -27,7 +29,7 @@
 <h3>Add your review</h3>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'reviews:add_review' album.id %}" method="post">
+<form action="{% url 'reviews:add_review' album.id %}" method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Add" />

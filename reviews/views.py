@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 import datetime
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from .models import Review, Album
@@ -31,13 +33,14 @@ def album_detail(request, album_id):
     form = ReviewForm()
     return render(request, 'reviews/album_detail.html', {'album': album, 'form': form})
 
+@login_required
 def add_review(request, album_id):
     album = get_object_or_404(Album, pk=album_id)
     form = ReviewForm(request.POST)
     if form.is_valid():
         rating = form.cleaned_data['rating']
         comment = form.cleaned_data['comment']
-        user = form.cleaned_data['user']
+        user = request.user
         review = Review()
         review.album = album
         review.user = user
@@ -51,3 +54,13 @@ def add_review(request, album_id):
         return HttpResponseRedirect(reverse('reviews:album_detail', args=(album.id,)))
 
     return render(request, 'reviews/album_detail.html', {'album': album, 'form': form})
+
+@login_required
+def user_review_list(request, username=None):
+    if not username:
+        user = request.user
+    else:
+        user = User.objects.filter(username=username).first()
+    latest_review_list = Review.objects.filter(user=request.user).order_by('-pub_date')
+    context = {'latest_review_list':latest_review_list, 'user':user}
+    return render(request, 'reviews/user_review_list.html', context)

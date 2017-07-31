@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.contrib.auth.models import User
 from django.db import models
 import numpy as np
 
@@ -24,7 +25,7 @@ class Review(models.Model):
     )
     album = models.ForeignKey(Album)
     pub_date = models.DateTimeField('date published')
-    user = models.CharField(max_length=100)
+    user = models.ForeignKey(User)
     comment = models.TextField()
     rating = models.IntegerField(choices=RATING_CHOICES)
 
