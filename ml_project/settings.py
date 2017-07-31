@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'reviews',
-    'registration'
+    'registration',
+    'django_seed',
 ]
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
