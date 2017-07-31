@@ -61,6 +61,6 @@ def user_review_list(request, username=None):
         user = request.user
     else:
         user = User.objects.filter(username=username).first()
-    latest_review_list = Review.objects.filter(user=request.user).order_by('-pub_date')
+    latest_review_list = Review.objects.filter(user=user).order_by('-pub_date')
     context = {'latest_review_list':latest_review_list, 'user':user}
     return render(request, 'reviews/user_review_list.html', context)

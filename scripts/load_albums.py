@@ -1,6 +1,8 @@
 import sys, os 
+from os.path import realpath, join, dirname
 import pandas as pd
 
+sys.path.insert(0, join(dirname(realpath(__file__)),'../'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ml_project.settings")
 
 import django

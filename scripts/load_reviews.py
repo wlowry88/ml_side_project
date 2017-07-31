@@ -1,20 +1,23 @@
-import sys, os 
-import pandas as pd
+import sys, os
+from os.path import realpath, join, dirname
 import datetime
+import pandas as pd
 
+sys.path.insert(0, join(dirname(realpath(__file__)),'../'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ml_project.settings")
 
 import django
 django.setup()
 
 from reviews.models import Review, Album
+from django.contrib.auth.models import User
 
 
 def save_review_from_row(review_row):
     review = Review()
     review.id = review_row[0]
-    review.user_name = review_row[1]
-    review.wine = Album.objects.get(id=review_row[2])
+    review.user = User.objects.get(id=review_row[1])
+    review.album = Album.objects.get(id=review_row[2])
     review.rating = review_row[3]
     review.pub_date = datetime.datetime.now()
     review.comment = review_row[4]
