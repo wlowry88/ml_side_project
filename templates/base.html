@@ -18,6 +18,7 @@
         <li><a href="{% url 'reviews:album_list' %}">Album List</a></li>
         <li><a href="{% url 'reviews:review_list' %}">Home</a></li>
         {% if user.is_authenticated %}
+        <li><a href="{% url 'reviews:user_recommendation_list' %}">Album suggestions</a></li>
         <li><a href="{% url 'reviews:user_review_list' user.username %}">Hello {{ user.username }}</a></li>
         <li><a href="{% url 'auth:logout' %}">Logout</a></li>
         {% else %}
@@ -28,6 +29,7 @@
         <li><a href="{% url 'reviews:album_list' %}">Album List</a></li>
         <li><a href="{% url 'reviews:review_list' %}">Home</a></li>
         {% if user.is_authenticated %}
+        <li><a href="{% url 'reviews:user_recommendation_list' %}">Album suggestions</a></li>
         <li><a href="{% url 'reviews:user_review_list' user.username %}">Hello {{ user.username }}</a></li>
         <li><a href="{% url 'auth:logout' %}">Logout</a></li>
         {% else %}

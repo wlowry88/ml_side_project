@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
-from .models import Review, Album
+from .models import Review, Album, Cluster
 from .forms import ReviewForm
 
 
@@ -67,5 +67,32 @@ def user_review_list(request, username=None):
 
 @login_required
 def user_recommendation_list(request):
-    return render(request, 'reviews/user_recommendation_list.html', {'username': request.user.username})
+    user_reviews = Review.objects.filter(user=request.user).prefetch_related('album')
+    user_reviews_album_ids = set(map(lambda x: x.album.id, user_reviews))
+
+    user_cluster_name = request.user.cluster_set.first().name
+
+    user_cluster_other_members = \
+        Cluster.objects.get(name=user_cluster_name).users \
+            .exclude(id=request.user.id).all()
+    other_members_user_ids = set(map(lambda x: x.id, user_cluster_other_members))
+
+    print 'OTHER MEMBERS: ', user_cluster_other_members
+    print 'OTHER MEMBER IDS', other_members_user_ids
+
+    other_users_reviews = \
+        Review.objects.filter(user_id__in=other_members_user_ids) \
+            .exclude(album__id__in=user_reviews_album_ids)
+    other_users_reviews_album_ids = set(map(lambda x: x.album.id, other_users_reviews))
+    print 'OTHER USER REVIEWS: ', other_users_reviews 
+    album_list = sorted(
+        list(Album.objects.filter(id__in=other_users_reviews_album_ids)),
+        key=lambda x: x.average_rating,
+        reverse=True
+    )
+    return render(
+        request,
+        'reviews/user_recommendation_list.html',
+        {'username': request.user.username, 'album_list': album_list}
+    )
 
