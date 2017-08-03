@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from .models import Review, Album, Cluster
 from .forms import ReviewForm
+from .suggestions import update_clusters
 
 
 def review_list(request):
@@ -48,6 +49,7 @@ def add_review(request, album_id):
         review.comment = comment
         review.pub_date = datetime.datetime.now()
         review.save()
+        update_clusters()
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
@@ -67,24 +69,31 @@ def user_review_list(request, username=None):
 
 @login_required
 def user_recommendation_list(request):
+    # get request user reviewed albums
     user_reviews = Review.objects.filter(user=request.user).prefetch_related('album')
     user_reviews_album_ids = set(map(lambda x: x.album.id, user_reviews))
 
-    user_cluster_name = request.user.cluster_set.first().name
+    # get request user cluster name (first one for now)
+    try:
+        user_cluster_name = \
+            request.user.cluster_set.first().name
+    except:
+        update_cluster_name = \
+            User.objects.get(username=request.user.username).cluster_set.first().name
 
+    # get usernames for other members of the cluster
     user_cluster_other_members = \
         Cluster.objects.get(name=user_cluster_name).users \
             .exclude(id=request.user.id).all()
     other_members_user_ids = set(map(lambda x: x.id, user_cluster_other_members))
 
-    print 'OTHER MEMBERS: ', user_cluster_other_members
-    print 'OTHER MEMBER IDS', other_members_user_ids
-
+    # get reviews by those users, excluding albums reviewed by current user
+    # get album ids
     other_users_reviews = \
         Review.objects.filter(user_id__in=other_members_user_ids) \
             .exclude(album__id__in=user_reviews_album_ids)
     other_users_reviews_album_ids = set(map(lambda x: x.album.id, other_users_reviews))
-    print 'OTHER USER REVIEWS: ', other_users_reviews 
+    # get an album list, ordered by rating, including previous ids
     album_list = sorted(
         list(Album.objects.filter(id__in=other_users_reviews_album_ids)),
         key=lambda x: x.average_rating,
